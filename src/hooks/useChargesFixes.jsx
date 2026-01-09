@@ -88,19 +88,12 @@ export const useChargesFixes = () => {
     const anneeActuelle = aujourdHui.getFullYear();
     const nouvellesTransactions = [];
     
-    let moisDebutEffectif = 0;
-    if (dateCreationCompte) {
-      const dateCreationObj = new Date(dateCreationCompte);
-      const anneeCreation = dateCreationObj.getFullYear();
-      const moisCreation = dateCreationObj.getMonth();
-      
-      if (anneeActuelle === anneeCreation) {
-        moisDebutEffectif = moisCreation;
-      }
-    }
-    
-    charges.forEach(charge => {
-      for (let mois = moisDebutEffectif; mois < 12; mois++) {
+    // Toujours générer pour toute l'année
+    const moisDebut = 0;
+    const moisFin = 12;
+
+      charges.forEach(charge => {
+        for (let mois = moisDebut; mois < moisFin; mois++) {
         const dateTransaction = new Date(anneeActuelle, mois, charge.jourMois, 12, 0, 0);
         
         if (dateTransaction.getFullYear() !== anneeActuelle) continue;

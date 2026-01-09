@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FinanceProvider, useFinance } from './contexts/FinanceContext';
 import { getCurrentUser, setCurrentUser as saveCurrentUser } from './utils/storage';
+import { useChargesFixes } from './hooks/useChargesFixes';
 import { Notification } from './components/Common/Notification';
 import { Header } from './components/Layout/Header';
 import { LoginForm } from './components/Auth/LoginForm';
@@ -43,6 +44,8 @@ function AppContent() {
     categoriesRevenus,
     categoriesEpargnes
   } = useFinance();
+
+  const { genererTransactionsChargesFixes } = useChargesFixes();
 
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState('login');
@@ -165,6 +168,11 @@ function AppContent() {
       objectif: parseFloat(e.objectif)
     }));
     setEpargnes(nouvellesEpargnes);
+
+    // Générer les transactions pour toute l'année 
+    setTimeout(() => {                               
+      genererTransactionsChargesFixes(nouvellesCharges);  
+    }, 500);                                        
 
     // Terminer l'onboarding
     setOnboardingStep(0);
