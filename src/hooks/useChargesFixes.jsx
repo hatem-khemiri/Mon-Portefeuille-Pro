@@ -80,8 +80,115 @@ export const useChargesFixes = () => {
   };
 
   const updateChargeFixe = (id, updatedData) => {
-    setChargesFixes(chargesFixes.map(cf => cf.id === id ? { ...cf, ...updatedData } : cf));
-  };
+  // Trouver la charge à modifier
+  const chargeModifiee = chargesFixes.find(cf => cf.id === id);
+  if (!chargeModifiee) return;
+  
+  // Créer la nouvelle charge avec les modifications
+  const nouvelleCharge = { ...chargeModifiee, ...updatedData };
+  
+  // Mettre à jour la liste des charges fixes
+  setChargesFixes(chargesFixes.map(cf => cf.id === id ? nouvelleCharge : cf));
+  
+  // Supprimer TOUTES les anciennes transactions de cette charge
+  const transactionsAGarder = transactions.filter(t => t.chargeFixeId !== id);
+  setTransactions(transactionsAGarder);
+  
+  // Régénérer les transactions avec les nouvelles valeurs
+  setTimeout(() => {
+    // Calculer les nouvelles transactions
+    const aujourdHui = new Date();
+    const anneeActuelle = aujourdHui.getFullYear();
+    const nouvellesTransactions = [];
+    
+    let moisDebut = 0;
+    const dateCreationUtilisee = dateCreationCompte;
+    
+    if (dateCreationUtilisee) {
+      const dateCreationObj = new Date(dateCreationUtilisee);
+      const anneeCreation = dateCreationObj.getFullYear();
+      const moisCreation = dateCreationObj.getMonth();
+      
+      if (anneeActuelle === anneeCreation) {
+        moisDebut = moisCreation + 1;
+      }
+    }
+    
+    const moisFin = 12;
+    
+    for (let mois = moisDebut; mois < moisFin; mois++) {
+      const dateTransaction = new Date(anneeActuelle, mois, nouvelleCharge.jourMois, 12, 0, 0);
+      
+      if (dateTransaction.getFullYear() !== anneeActuelle) continue;
+      
+      if (dateCreationUtilisee) {
+        const dateCreation = new Date(dateCreationUtilisee);
+        if (dateTransaction < dateCreation) continue;
+      }
+      
+      const statut = dateTransaction < aujourdHui ? 'realisee' : 'a_venir';
+      
+      let inclureTransaction = true;
+      if (nouvelleCharge.frequence === 'trimestrielle' && mois % 3 !== 0) {
+        inclureTransaction = false;
+      }
+      if (nouvelleCharge.frequence === 'annuelle' && mois !== 0) {
+        inclureTransaction = false;
+      }
+      
+      if (inclureTransaction) {
+        if (nouvelleCharge.type === 'transfert') {
+          const transfertId = Date.now() + Math.random();
+          const montant = Math.abs(nouvelleCharge.montant);
+          
+          nouvellesTransactions.push({
+            id: transfertId,
+            date: dateTransaction.toISOString().split('T')[0],
+            description: `${nouvelleCharge.nom} (vers ${nouvelleCharge.compteDestination})`,
+            montant: -montant,
+            categorie: 'Transfert',
+            compte: nouvelleCharge.compte,
+            statut: statut,
+            type: 'transfert',
+            transfertLieId: transfertId + 0.1,
+            isFromChargeFixe: true,
+            chargeFixeId: nouvelleCharge.id
+          });
+          
+          nouvellesTransactions.push({
+            id: transfertId + 0.1,
+            date: dateTransaction.toISOString().split('T')[0],
+            description: `${nouvelleCharge.nom} (depuis ${nouvelleCharge.compte})`,
+            montant: montant,
+            categorie: 'Transfert',
+            compte: nouvelleCharge.compteDestination,
+            statut: statut,
+            type: 'transfert',
+            transfertLieId: transfertId,
+            isFromChargeFixe: true,
+            chargeFixeId: nouvelleCharge.id
+          });
+        } else {
+          nouvellesTransactions.push({
+            id: Date.now() + Math.random(),
+            date: dateTransaction.toISOString().split('T')[0],
+            description: nouvelleCharge.nom,
+            montant: nouvelleCharge.montant,
+            categorie: nouvelleCharge.categorie,
+            compte: nouvelleCharge.compte,
+            statut: statut,
+            isFromChargeFixe: true,
+            chargeFixeId: nouvelleCharge.id,
+            type: 'normale'
+          });
+        }
+      }
+    }
+    
+    // Ajouter les nouvelles transactions
+    setTransactions([...transactionsAGarder, ...nouvellesTransactions]);
+  }, 200);
+};
 
   const genererTransactionsChargesFixes = (charges = chargesFixes, dateCreationForcee = null) => {
     const aujourdHui = new Date();
