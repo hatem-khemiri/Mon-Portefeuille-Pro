@@ -253,16 +253,18 @@ export const ChargesTab = () => {
                     </>
                   )}
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center flex-shrink-0 ml-4">
                   <button 
                     onClick={() => setEditingChargeFixe(isEditing ? null : charge.id)}
-                    className={`p-2 rounded-lg transition-all ${isEditing ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'}`}
+                    className={`p-2 rounded-lg transition-all flex-shrink-0 ${isEditing ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'}`}
+                    title={isEditing ? 'Terminer' : 'Modifier'}
                   >
                     {isEditing ? <Check size={20} /> : '✏️'}
                   </button>
                   <button 
                     onClick={() => setDeletingChargeFixe(charge)} 
-                    className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-all"
+                    className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-all flex-shrink-0"
+                    title="Supprimer"
                   >
                     <Trash2 size={20} />
                   </button>
