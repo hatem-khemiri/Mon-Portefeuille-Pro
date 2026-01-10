@@ -109,6 +109,12 @@ export const useChargesFixes = () => {
         
         if (dateTransaction.getFullYear() !== anneeActuelle) continue;
         
+        // ✅ CORRECTION : Ignorer les transactions avant la date de création du compte
+        if (dateCreationCompte) {
+          const dateCreation = new Date(dateCreationCompte);
+          if (dateTransaction < dateCreation) continue;
+        }
+
         // Vérifier si cette transaction existe déjà
         const existeDeja = transactions.some(t => {
           const memeCharge = t.chargeFixeId === charge.id;
