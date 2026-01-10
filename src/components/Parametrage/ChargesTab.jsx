@@ -144,7 +144,7 @@ export const ChargesTab = () => {
             const isTransfert = charge.type === 'transfert';
             
             return (
-              <div key={charge.id} className={`flex items-start md:items-center justify-between p-4 rounded-xl border-2 hover:shadow-md transition-all gap-4 ${
+              <div key={charge.id} className={`flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl border-2 hover:shadow-md transition-all gap-3 ${
                 isTransfert 
                   ? 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200' 
                   : 'bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200'
@@ -253,7 +253,7 @@ export const ChargesTab = () => {
                     </>
                   )}
                 </div>
-                <div className="flex gap-2 items-center flex-shrink-0 ml-4">
+                <div className="flex gap-2 items-center justify-end md:justify-start flex-shrink-0 md:ml-4">
                   <button 
                     onClick={() => setEditingChargeFixe(isEditing ? null : charge.id)}
                     className={`p-2 rounded-lg transition-all flex-shrink-0 ${isEditing ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'}`}
