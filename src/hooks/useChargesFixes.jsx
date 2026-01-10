@@ -108,11 +108,20 @@ export const useChargesFixes = () => {
       const dateCreationObj = new Date(dateCreationUtilisee);
       const anneeCreation = dateCreationObj.getFullYear();
       const moisCreation = dateCreationObj.getMonth();
-      
+  
       if (anneeActuelle === anneeCreation) {
+        // ✅ CORRECTION : Vérifier si la transaction du mois en cours est déjà passée
+        const dateTransactionMoisActuel = new Date(anneeActuelle, moisCreation, nouvelleCharge.jourMois, 12, 0, 0);
+    
+        // Si la transaction du mois en cours n'est pas encore passée, commencer ce mois-ci
+        if (dateTransactionMoisActuel >= aujourdHui) {
+          moisDebut = moisCreation;
+        } else {
+        // Sinon, commencer au mois suivant
         moisDebut = moisCreation + 1;
       }
     }
+  }
     
     const moisFin = 12;
     
