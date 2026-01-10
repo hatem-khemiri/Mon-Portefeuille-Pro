@@ -170,8 +170,8 @@ function AppContent() {
     setEpargnes(nouvellesEpargnes);
 
     // Générer les transactions pour toute l'année 
-    setTimeout(() => {                               
-      genererTransactionsChargesFixes(nouvellesCharges);  
+    setTimeout(() => {
+      genererTransactionsChargesFixes(nouvellesCharges, dateCreation);
     }, 500);                                        
 
     // Terminer l'onboarding

@@ -83,7 +83,7 @@ export const useChargesFixes = () => {
     setChargesFixes(chargesFixes.map(cf => cf.id === id ? { ...cf, ...updatedData } : cf));
   };
 
-  const genererTransactionsChargesFixes = (charges = chargesFixes) => {
+  const genererTransactionsChargesFixes = (charges = chargesFixes, dateCreationForcee = null) => {
     const aujourdHui = new Date();
     const anneeActuelle = aujourdHui.getFullYear();
     const nouvellesTransactions = [];
@@ -91,8 +91,10 @@ export const useChargesFixes = () => {
     // Toujours générer pour toute l'année
     let moisDebut = 0;
   
-  if (dateCreationCompte) {
-    const dateCreationObj = new Date(dateCreationCompte);
+  const dateCreationUtilisee = dateCreationForcee || dateCreationCompte;
+
+  if (dateCreationUtilisee) {
+    const dateCreationObj = new Date(dateCreationUtilisee);
     const anneeCreation = dateCreationObj.getFullYear();
     const moisCreation = dateCreationObj.getMonth();
     
@@ -109,9 +111,9 @@ export const useChargesFixes = () => {
         
         if (dateTransaction.getFullYear() !== anneeActuelle) continue;
         
-        // ✅ CORRECTION : Ignorer les transactions avant la date de création du compte
-        if (dateCreationCompte) {
-          const dateCreation = new Date(dateCreationCompte);
+        // Ignorer les transactions avant la date de création du compte
+        if (dateCreationUtilisee) {
+          const dateCreation = new Date(dateCreationUtilisee);
           if (dateTransaction < dateCreation) continue;
         }
 
