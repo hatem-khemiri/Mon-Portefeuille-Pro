@@ -144,7 +144,7 @@ export const ChargesTab = () => {
             const isTransfert = charge.type === 'transfert';
             
             return (
-              <div key={charge.id} className={`flex items-center justify-between p-4 rounded-xl border-2 hover:shadow-md transition-all ${
+              <div key={charge.id} className={`flex items-start md:items-center justify-between p-4 rounded-xl border-2 hover:shadow-md transition-all gap-4 ${
                 isTransfert 
                   ? 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200' 
                   : 'bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200'
