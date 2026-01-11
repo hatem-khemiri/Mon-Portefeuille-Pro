@@ -24,20 +24,20 @@ export const BudgetTable = ({
           <tbody className="divide-y divide-gray-200">
             {MONTHS.map((month, idx) => {
               // ✅ NOUVEAU : Vérifier si le mois est hors période
-              const horsPeriode = previsionnelData[idx]?.horsPerio de || false;
+              const horsPeriode = previsionnelData[idx]?.horsPeriode || false;
               
               return (
                 <tr 
                   key={idx} 
                   className={`transition-colors ${
-                    horsPerio de 
+                    horsPeriode 
                       ? 'bg-gray-100 opacity-50' 
                       : `hover:bg-blue-50/50 ${idx % 2 === 0 ? 'bg-gray-50/50' : ''}`
                   }`}
                 >
                   <td className="px-6 py-4 text-sm font-bold">
                     {month}
-                    {horsPerio de && (
+                    {horsPeriode && (
                       <span className="ml-2 text-xs text-gray-500 italic">
                         (Hors période)
                       </span>
@@ -45,7 +45,7 @@ export const BudgetTable = ({
                   </td>
                   
                   <td className="px-6 py-4 text-right text-sm">
-                    {horsPerio de ? (
+                    {horsPeriode ? (
                       <span className="text-gray-400">-</span>
                     ) : (editMode && modeCalcul !== 'automatique') ? (
                       <input
@@ -66,7 +66,7 @@ export const BudgetTable = ({
                   </td>
                   
                   <td className="px-6 py-4 text-right text-sm">
-                    {horsPerio de ? (
+                    {horsPeriode ? (
                       <span className="text-gray-400">-</span>
                     ) : (editMode && modeCalcul !== 'automatique') ? (
                       <input
@@ -87,7 +87,7 @@ export const BudgetTable = ({
                   </td>
                   
                   <td className="px-6 py-4 text-right text-sm">
-                    {horsPerio de ? (
+                    {horsPeriode ? (
                       <span className="text-gray-400">-</span>
                     ) : (editMode && modeCalcul !== 'automatique') ? (
                       <input
@@ -108,7 +108,7 @@ export const BudgetTable = ({
                   </td>
                   
                   <td className="px-6 py-4 text-right text-sm">
-                    {horsPerio de ? (
+                    {horsPeriode ? (
                       <span className="text-gray-400">-</span>
                     ) : (editMode && modeCalcul !== 'automatique') ? (
                       <input
@@ -129,7 +129,7 @@ export const BudgetTable = ({
                   </td>
                   
                   <td className="px-6 py-4 text-right text-sm">
-                    {horsPerio de ? (
+                    {horsPeriode ? (
                       <span className="text-gray-400">-</span>
                     ) : (
                       <>
