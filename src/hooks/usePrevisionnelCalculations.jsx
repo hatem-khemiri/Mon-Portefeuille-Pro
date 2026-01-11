@@ -10,7 +10,8 @@ export const usePrevisionnelCalculations = () => {
     categoriesRevenus,
     categoriesDepenses,
     categoriesEpargnes,
-    budgetPrevisionnel 
+    budgetPrevisionnel,
+    dateCreationCompte  // ✅ AJOUT
   } = useFinance();
 
   const calculerPrevisionnelAutomatique = () => {
@@ -21,8 +22,24 @@ export const usePrevisionnelCalculations = () => {
       depenses: Array(12).fill(0)
     };
 
+    // ✅ CORRECTION : Déterminer le mois de début
+    let moisDebut = 0;
+    const aujourdHui = new Date();
+    const anneeActuelle = aujourdHui.getFullYear();
+    
+    if (dateCreationCompte) {
+      const dateCreation = new Date(dateCreationCompte);
+      const anneeCreation = dateCreation.getFullYear();
+      const moisCreation = dateCreation.getMonth();
+      
+      // Si on est dans l'année de création, commencer au mois de création
+      if (anneeActuelle === anneeCreation) {
+        moisDebut = moisCreation;
+      }
+    }
+
     chargesFixes.forEach(charge => {
-      for (let mois = 0; mois < 12; mois++) {
+      for (let mois = moisDebut; mois < 12; mois++) {  // ✅ MODIFIÉ
         let inclure = true;
         
         if (charge.frequence === 'trimestrielle' && mois % 3 !== 0) {
@@ -60,12 +77,34 @@ export const usePrevisionnelCalculations = () => {
     return previsionnel;
   };
 
+  // ✅ NOUVEAU : Calculer le mois de début pour l'affichage
+  const moisDebutAffichage = useMemo(() => {
+    if (!dateCreationCompte) return 0;
+    
+    const aujourdHui = new Date();
+    const anneeActuelle = aujourdHui.getFullYear();
+    const dateCreation = new Date(dateCreationCompte);
+    const anneeCreation = dateCreation.getFullYear();
+    const moisCreation = dateCreation.getMonth();
+    
+    // Si on est dans l'année de création, afficher depuis le mois de création
+    if (anneeActuelle === anneeCreation) {
+      return moisCreation;
+    }
+    
+    return 0;
+  }, [dateCreationCompte]);
+
   const previsionnelData = useMemo(() => {
     return MONTHS.map((month, idx) => {
+      // ✅ CORRECTION : Marquer les mois hors période
+      const horsPerio de = idx < moisDebutAffichage;
+      
       let soldeCumule = 0;
       let epargnesCumulees = 0;
       
-      for (let i = 0; i <= idx; i++) {
+      // Ne calculer que depuis le mois de début
+      for (let i = moisDebutAffichage; i <= idx; i++) {
         soldeCumule += budgetPrevisionnel.revenus[i] - 
                        budgetPrevisionnel.epargnes[i] - 
                        budgetPrevisionnel.factures[i] - 
@@ -75,22 +114,27 @@ export const usePrevisionnelCalculations = () => {
       
       return {
         mois: month,
-        revenus: budgetPrevisionnel.revenus[idx],
-        epargnes: budgetPrevisionnel.epargnes[idx],
-        epargnesCumulees: epargnesCumulees,
-        factures: budgetPrevisionnel.factures[idx],
-        depenses: budgetPrevisionnel.depenses[idx],
-        soldeMensuel: budgetPrevisionnel.revenus[idx] - 
-                      budgetPrevisionnel.epargnes[idx] - 
-                      budgetPrevisionnel.factures[idx] - 
-                      budgetPrevisionnel.depenses[idx],
-        solde: soldeCumule
+        moisIndex: idx,
+        horsPerio de,  // ✅ NOUVEAU
+        revenus: horsPerio de ? 0 : budgetPrevisionnel.revenus[idx],
+        epargnes: horsPerio de ? 0 : budgetPrevisionnel.epargnes[idx],
+        epargnesCumulees: horsPerio de ? 0 : epargnesCumulees,
+        factures: horsPerio de ? 0 : budgetPrevisionnel.factures[idx],
+        depenses: horsPerio de ? 0 : budgetPrevisionnel.depenses[idx],
+        soldeMensuel: horsPerio de ? 0 : (
+          budgetPrevisionnel.revenus[idx] - 
+          budgetPrevisionnel.epargnes[idx] - 
+          budgetPrevisionnel.factures[idx] - 
+          budgetPrevisionnel.depenses[idx]
+        ),
+        solde: horsPerio de ? 0 : soldeCumule
       };
     });
-  }, [budgetPrevisionnel]);
+  }, [budgetPrevisionnel, moisDebutAffichage]);
 
   return {
     calculerPrevisionnelAutomatique,
-    previsionnelData
+    previsionnelData,
+    moisDebutAffichage  // ✅ NOUVEAU : Export pour utilisation dans les composants
   };
 };
