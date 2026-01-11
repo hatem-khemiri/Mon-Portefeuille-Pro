@@ -2,7 +2,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 export const BudgetChart = ({ previsionnelData }) => {
   // ✅ CORRECTION : Filtrer les mois hors période
-  const donneesActives = previsionnelData.filter(data => !data.horsPerio de);
+  const donneesActives = previsionnelData.filter(data => !data.horsPeriode);
   
   return (
     <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl p-6">

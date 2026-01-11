@@ -24,7 +24,7 @@ export const BudgetTable = ({
           <tbody className="divide-y divide-gray-200">
             {MONTHS.map((month, idx) => {
               // ✅ NOUVEAU : Vérifier si le mois est hors période
-              const horsPerio de = previsionnelData[idx]?.horsPerio de || false;
+              const horsPeriode = previsionnelData[idx]?.horsPerio de || false;
               
               return (
                 <tr 

@@ -98,7 +98,7 @@ export const usePrevisionnelCalculations = () => {
   const previsionnelData = useMemo(() => {
     return MONTHS.map((month, idx) => {
       // ✅ CORRECTION : Marquer les mois hors période
-      const horsPerio de = idx < moisDebutAffichage;
+      const horsPeriode = idx < moisDebutAffichage;
       
       let soldeCumule = 0;
       let epargnesCumulees = 0;
