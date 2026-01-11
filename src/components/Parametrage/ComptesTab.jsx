@@ -3,7 +3,19 @@ import { Plus, Trash2, Check } from 'lucide-react';
 import { useFinance } from '../../contexts/FinanceContext';
 
 export const ComptesTab = () => {
-  const { comptes, setComptes } = useFinance();
+  const {
+    const { 
+    comptes, 
+    setComptes,
+    chargesFixes,
+    setChargesFixes,
+    transactions,
+    setTransactions,
+    epargnes,
+    setEpargnes,
+    dettes,
+    setDettes
+  } = useFinance();
   const [newCompte, setNewCompte] = useState({ nom: '', solde: '', type: 'courant' });
   const [editingCompte, setEditingCompte] = useState(null);
 
