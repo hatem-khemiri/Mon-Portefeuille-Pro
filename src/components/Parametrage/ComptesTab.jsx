@@ -3,8 +3,7 @@ import { Plus, Trash2, Check } from 'lucide-react';
 import { useFinance } from '../../contexts/FinanceContext';
 
 export const ComptesTab = () => {
-  const {
-    const { 
+  const { 
     comptes, 
     setComptes,
     chargesFixes,
