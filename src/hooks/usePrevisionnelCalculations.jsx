@@ -115,19 +115,19 @@ export const usePrevisionnelCalculations = () => {
       return {
         mois: month,
         moisIndex: idx,
-        horsPerio de,  // ✅ NOUVEAU
-        revenus: horsPerio de ? 0 : budgetPrevisionnel.revenus[idx],
-        epargnes: horsPerio de ? 0 : budgetPrevisionnel.epargnes[idx],
-        epargnesCumulees: horsPerio de ? 0 : epargnesCumulees,
-        factures: horsPerio de ? 0 : budgetPrevisionnel.factures[idx],
-        depenses: horsPerio de ? 0 : budgetPrevisionnel.depenses[idx],
-        soldeMensuel: horsPerio de ? 0 : (
+        horsPeriode,  // ✅ NOUVEAU
+        revenus: horsPeriode ? 0 : budgetPrevisionnel.revenus[idx],
+        epargnes: horsPeriode ? 0 : budgetPrevisionnel.epargnes[idx],
+        epargnesCumulees: horsPeriode ? 0 : epargnesCumulees,
+        factures: horsPeriode ? 0 : budgetPrevisionnel.factures[idx],
+        depenses: horsPeriode ? 0 : budgetPrevisionnel.depenses[idx],
+        soldeMensuel: horsPeriode ? 0 : (
           budgetPrevisionnel.revenus[idx] - 
           budgetPrevisionnel.epargnes[idx] - 
           budgetPrevisionnel.factures[idx] - 
           budgetPrevisionnel.depenses[idx]
         ),
-        solde: horsPerio de ? 0 : soldeCumule
+        solde: horsPeriode ? 0 : soldeCumule
       };
     });
   }, [budgetPrevisionnel, moisDebutAffichage]);
