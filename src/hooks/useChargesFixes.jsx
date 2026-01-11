@@ -210,15 +210,16 @@ export const useChargesFixes = () => {
   const dateCreationUtilisee = dateCreationForcee || dateCreationCompte;
 
   if (dateCreationUtilisee) {
-    const dateCreationObj = new Date(dateCreationUtilisee);
-    const anneeCreation = dateCreationObj.getFullYear();
-    const moisCreation = dateCreationObj.getMonth();
-    
-    // Si on est dans l'année de création, commencer au MOIS SUIVANT
-    if (anneeActuelle === anneeCreation) {
-      moisDebut = moisCreation + 1; // ✅ +1 = mois suivant
-    }
+  const dateCreationObj = new Date(dateCreationUtilisee);
+  const anneeCreation = dateCreationObj.getFullYear();
+  const moisCreation = dateCreationObj.getMonth();
+  
+  if (anneeActuelle === anneeCreation) {
+    // ✅ Pour chaque charge, vérifier si elle est déjà passée ce mois-ci
+    // On va commencer au mois actuel par défaut
+    moisDebut = moisCreation;
   }
+}
     const moisFin = 12;
 
       charges.forEach(charge => {
@@ -228,10 +229,17 @@ export const useChargesFixes = () => {
         if (dateTransaction.getFullYear() !== anneeActuelle) continue;
         
         // Ignorer les transactions avant la date de création du compte
-        if (dateCreationUtilisee) {
-          const dateCreation = new Date(dateCreationUtilisee);
-          if (dateTransaction < dateCreation) continue;
-        }
+if (dateCreationUtilisee) {
+  const dateCreation = new Date(dateCreationUtilisee);
+  const aujourdHuiMinuit = new Date(aujourdHui.getFullYear(), aujourdHui.getMonth(), aujourdHui.getDate());
+  
+  // Si la transaction est avant la création OU si elle est dans le passé (déjà passée)
+  if (dateTransaction < dateCreation) continue;
+  if (dateTransaction < aujourdHuiMinuit && new Date(dateTransaction).getMonth() === new Date(dateCreation).getMonth()) {
+    // Si c'est le mois de création ET que la date de transaction est déjà passée, skip
+    continue;
+  }
+}
 
         // Vérifier si cette transaction existe déjà
         const existeDeja = transactions.some(t => {
