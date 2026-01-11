@@ -178,14 +178,59 @@ function AppContent() {
     setOnboardingStep(0);
   };
 
-  const handleExport = () => {
-    // Logique d'export du rapport
-    setNotification({ type: 'info', message: '📄 Génération du rapport en cours...' });
+  const handleExport = async () => {
+  setNotification({ type: 'info', message: '📄 Génération du rapport en cours...' });
+  
+  try {
+    // Importer la fonction de génération du rapport
+    const { generateReport } = await import('./utils/reportGenerator');
     
-    setTimeout(() => {
-      setNotification({ type: 'success', message: '✅ Rapport généré avec succès !' });
-    }, 1000);
-  };
+    // Générer le rapport HTML
+    const reportHTML = generateReport({
+      currentUser,
+      comptes,
+      transactions,
+      chargesFixes,
+      epargnes,
+      dettes,
+      categoriesDepenses,
+      categoriesRevenus,
+      categoriesEpargnes
+    });
+    
+    // Créer un Blob avec le HTML
+    const blob = new Blob([reportHTML], { type: 'text/html;charset=utf-8' });
+    
+    // Vérifier si l'API Web Share est disponible (pour Android/PWA)
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'rapport.html', { type: 'text/html' })] })) {
+      // Utiliser l'API Web Share native (Android)
+      const file = new File([blob], `Rapport_${currentUser}_${new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')}.html`, { 
+        type: 'text/html' 
+      });
+      
+      await navigator.share({
+        title: 'Rapport Financier',
+        text: `Rapport financier de ${currentUser}`,
+        files: [file]
+      });
+      
+      setNotification({ type: 'success', message: '✅ Rapport partagé avec succès !' });
+    } else {
+      // Fallback : Ouvrir dans un nouvel onglet
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      
+      // Libérer la mémoire après un délai
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+      
+      setNotification({ type: 'success', message: '✅ Rapport ouvert dans un nouvel onglet !' });
+    }
+  } catch (error) {
+    console.error('Erreur export:', error);
+    setNotification({ type: 'error', message: '❌ Erreur lors de la génération du rapport' });
+  }
+};
+
 
   if (isLoading) {
     return (
