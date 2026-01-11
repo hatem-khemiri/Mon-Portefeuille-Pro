@@ -26,12 +26,85 @@ export const ComptesTab = () => {
   };
 
   const updateCompte = (id, updatedData) => {
+    // Trouver le compte à modifier
+    const compteActuel = comptes.find(c => c.id === id);
+    if (!compteActuel) {
+      setEditingCompte(null);
+      return;
+    }
+  
+    const ancienNom = compteActuel.nom;
+    const nouveauNom = updatedData.nom || ancienNom;
+  
+    // Mettre à jour le compte
     setComptes(comptes.map(c => {
       if (c.id === id) {
         return { ...c, ...updatedData };
       }
       return c;
     }));
+  
+    // Si le nom a changé, mettre à jour toutes les références
+    if (ancienNom !== nouveauNom) {
+      console.log(`🔄 Renommage du compte: "${ancienNom}" → "${nouveauNom}"`);
+    
+      // 1. Mettre à jour les charges fixes (compte source ET destination pour les transferts)
+      setChargesFixes(chargesFixes.map(cf => {
+        let updated = { ...cf };
+        let modified = false;
+      
+        if (cf.compte === ancienNom) {
+          updated.compte = nouveauNom;
+          modified = true;
+        }
+      
+        if (cf.compteDestination === ancienNom) {
+          updated.compteDestination = nouveauNom;
+          modified = true;
+        }
+      
+        if (modified) {
+          console.log(`  ✅ Charge fixe "${cf.nom}" mise à jour`);
+        }
+      
+        return updated;
+      }));
+    
+      // 2. Mettre à jour les transactions
+      const transactionsModifiees = transactions.filter(t => t.compte === ancienNom).length;
+      setTransactions(transactions.map(t => 
+        t.compte === ancienNom ? { ...t, compte: nouveauNom } : t
+      ));
+      if (transactionsModifiees > 0) {
+        console.log(`  ✅ ${transactionsModifiees} transaction(s) mise(s) à jour`);
+      }
+    
+      // 3. Mettre à jour les épargnes
+      const epargnesModifiees = epargnes.filter(e => 
+        e.comptesAssocies.includes(ancienNom)
+      ).length;
+      setEpargnes(epargnes.map(e => ({
+        ...e,
+        comptesAssocies: e.comptesAssocies.map(nom => 
+          nom === ancienNom ? nouveauNom : nom
+        )
+      })));
+      if (epargnesModifiees > 0) {
+        console.log(`  ✅ ${epargnesModifiees} épargne(s) mise(s) à jour`);
+      }
+    
+      // 4. Mettre à jour les dettes
+      const dettesModifiees = dettes.filter(d => d.compte === ancienNom).length;
+      setDettes(dettes.map(d => 
+        d.compte === ancienNom ? { ...d, compte: nouveauNom } : d
+      ));
+      if (dettesModifiees > 0) {
+        console.log(`  ✅ ${dettesModifiees} dette(s) mise(s) à jour`);
+      }
+    
+      console.log(`✨ Renommage terminé !`);
+    }
+  
     setEditingCompte(null);
   };
 
