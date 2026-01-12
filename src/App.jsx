@@ -15,6 +15,7 @@ import { EpargnesContainer } from './components/Epargnes/EpargnesContainer';
 import { DettesContainer } from './components/Dettes/DettesContainer';
 import { ParametrageContainer } from './components/Parametrage/ParametrageContainer';
 import { TrendingUp, FileText, Calendar, PiggyBank, CreditCard, Settings } from 'lucide-react';
+import { generateReport } from './utils/reportGenerator';
 
 const tabs = [
   { id: 'dashboard', label: 'Tableau de Bord', icon: TrendingUp },
@@ -184,9 +185,6 @@ function AppContent() {
   setNotification({ type: 'info', message: '📄 Génération du rapport en cours...' });
   
   try {
-    // Importer la fonction de génération du rapport
-    const { generateReport } = await import('./utils/reportGenerator');
-    
     // Générer le rapport HTML
     const reportHTML = generateReport({
       currentUser,
