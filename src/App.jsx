@@ -27,23 +27,25 @@ const tabs = [
 
 function AppContent() {
   const { 
-    currentUser, 
-    setCurrentUser, 
-    isLoading, 
-    setIsLoading,
-    loadData,
-    comptes,
-    setComptes,
-    transactions,
-    chargesFixes,
-    setChargesFixes,
-    epargnes,
-    setEpargnes,
-    setDateCreationCompte,
-    categoriesDepenses,
-    categoriesRevenus,
-    categoriesEpargnes
-  } = useFinance();
+  currentUser, 
+  setCurrentUser, 
+  isLoading, 
+  setIsLoading,
+  loadData,
+  comptes,
+  setComptes,
+  transactions,
+  chargesFixes,
+  setChargesFixes,
+  epargnes,
+  setEpargnes,
+  dettes,           // ← AJOUTER
+  setDettes,        // ← AJOUTER
+  setDateCreationCompte,
+  categoriesDepenses,
+  categoriesRevenus,
+  categoriesEpargnes
+} = useFinance();
 
   const { genererTransactionsChargesFixes } = useChargesFixes();
 

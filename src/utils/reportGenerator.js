@@ -1,16 +1,16 @@
 export const generateReport = (data) => {
-  const { currentUser, comptes, transactions, chargesFixes, epargnes, dettes } = data;
+  const { currentUser, comptes, transactions, chargesFixes, epargnes = [], dettes = [] } = data;
   const aujourdHui = new Date().toLocaleDateString('fr-FR');
   
-  const totalEpargnes = epargnes.reduce((acc, e) => {
-    const solde = e.comptesAssocies.reduce((total, compteNom) => {
-      const compte = comptes.find(c => c.nom === compteNom);
-      return total + (compte ? compte.solde : 0);
-    }, 0);
-    return acc + solde;
+  const totalEpargnes = (epargnes || []).reduce((acc, e) => {
+  const solde = (e.comptesAssocies || []).reduce((total, compteNom) => {
+    const compte = comptes.find(c => c.nom === compteNom);
+    return total + (compte ? compte.solde : 0);
   }, 0);
-  
-  const totalDettes = dettes.reduce((acc, d) => acc + d.restant, 0);
+  return acc + solde;
+}, 0);
+
+const totalDettes = (dettes || []).reduce((acc, d) => acc + (d.restant || 0), 0);
   
   const html = `
 <!DOCTYPE html>
