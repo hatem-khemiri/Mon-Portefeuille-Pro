@@ -186,7 +186,7 @@ function AppContent() {
   
   try {
     // Générer le rapport HTML
-    const reportHTML = generateReport({
+    const reportHTML = generateReportHTML({
       currentUser,
       comptes,
       transactions,
