@@ -1,0 +1,17 @@
+{
+  "functions": {
+    "api/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "BRIDGE_CLIENT_ID": "sandbox_id_9bdaff1c51f04097ba9b621e5ff75af7",
+    "BRIDGE_CLIENT_SECRET": "sandbox_secret_dSl20yKV1tJ9JgA9oM2Bb2cmi4tlyL9JjJLZEto3zGo2ljydMAqDf4OoauHPpGEt",
+    "BRIDGE_VERSION": "2021-06-01",
+    "RESEND_API_KEY": "re_aQi2S2Xe_NdnfbmYpcBaS1268sokCxSmD",
+    "ALERT_EMAIL": "hatem.khemiri@gmail.com",
+    "MAX_USERS": "100",
+    "ALERT_THRESHOLDS": "25,50,75,90,95"
+  }
+}

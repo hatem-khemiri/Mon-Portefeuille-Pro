@@ -4,12 +4,14 @@ import { CategoriesTab } from './CategoriesTab';
 import { ChargesTab } from './ChargesTab';
 import { MemosTab } from './MemosTab';
 import { ProfilTab } from './ProfilTab';
+import { BankConnection } from '../Bank/BankConnection';
 
 export const ParametrageContainer = ({ onExport, onLogout }) => {
   const [activeSection, setActiveSection] = useState('comptes');
 
   const sections = [
     { id: 'comptes', label: '💳 Comptes Bancaires' },
+    { id: 'bank', label: '🏦 Synchronisation Bancaire' },
     { id: 'categories', label: '🏷️ Catégories' },
     { id: 'charges', label: '🔄 Transactions Récurrentes' },
     { id: 'memos', label: '📝 Mémos Budgétaires' },
@@ -20,6 +22,8 @@ export const ParametrageContainer = ({ onExport, onLogout }) => {
     switch (activeSection) {
       case 'comptes':
         return <ComptesTab />;
+      case 'bank':
+        return <BankConnection />;
       case 'categories':
         return <CategoriesTab />;
       case 'charges':

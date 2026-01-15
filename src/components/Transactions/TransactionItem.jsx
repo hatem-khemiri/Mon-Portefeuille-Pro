@@ -36,12 +36,16 @@ export const TransactionItem = ({ transaction, onDelete }) => {
           />
         ) : (
           <div className="flex items-center gap-2">
+            {transaction.isSynced && (
+              <span className="px-2 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800" title="Transaction synchronisée depuis votre banque">
+                🏦
+              </span>
+            )}
             {transaction.isFromChargeFixe && <span title="Issue d'une charge fixe">📌</span>}
             {transaction.type === 'transfert' && <span title="Transfert entre comptes">🔄</span>}
             {transaction.description}
           </div>
-        )}
-      </td>
+        </td>
       <td className="px-6 py-4 text-sm">
         {isEditing ? (
           <select

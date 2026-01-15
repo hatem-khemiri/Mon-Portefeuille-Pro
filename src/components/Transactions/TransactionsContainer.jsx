@@ -42,6 +42,22 @@ export const TransactionsContainer = () => {
                   </p>
                 </div>
               </div>
+            ) : deletingTransaction.isSynced ? (
+              <div className="space-y-4">
+                <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
+                  <p className="text-sm text-blue-800 mb-2">
+                    🏦 Cette transaction provient de votre <strong>synchronisation bancaire</strong>.
+                  </p>
+                  <p className="text-sm text-blue-700">
+                    La supprimer ne la supprimera que localement. Elle réapparaîtra lors de la prochaine synchronisation.
+                  </p>
+                </div>
+                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4">
+                  <p className="text-xs text-yellow-800">
+                    💡 Pour masquer définitivement des transactions bancaires, déconnectez votre banque dans <strong>Paramétrage → Synchronisation Bancaire</strong>
+                  </p>
+                </div>
+              </div>
             ) : (
               <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
                 <p className="text-sm text-red-800">
@@ -75,7 +91,7 @@ export const TransactionsContainer = () => {
 
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-4">
         <p className="text-sm text-gray-700">
-          💡 Les transactions marquées 📌 proviennent de vos charges fixes. Les transactions marquées 🔄 sont des transferts entre vos comptes.
+          💡 Les transactions marquées 🏦 sont synchronisées depuis votre banque. Les transactions marquées 📌 proviennent de vos charges fixes. Les transactions marquées 🔄 sont des transferts entre vos comptes.
         </p>
       </div>
 
