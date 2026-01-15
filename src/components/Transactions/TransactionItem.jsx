@@ -45,7 +45,8 @@ export const TransactionItem = ({ transaction, onDelete }) => {
             {transaction.type === 'transfert' && <span title="Transfert entre comptes">🔄</span>}
             {transaction.description}
           </div>
-        </td>
+        )}
+      </td>
       <td className="px-6 py-4 text-sm">
         {isEditing ? (
           <select
