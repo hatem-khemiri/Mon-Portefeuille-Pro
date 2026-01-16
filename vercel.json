@@ -1,8 +1,19 @@
 {
   "functions": {
-    "api/**/*.{js,ts}": {
+    "api/**/*.js": {
       "memory": 1024,
-      "maxDuration": 30
+      "maxDuration": 10
     }
-  }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
+  ]
 }
