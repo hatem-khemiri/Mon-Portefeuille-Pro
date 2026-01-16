@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getUsersCount, getAccessToken } from './utils.js';
+import { getAccessToken } from './utils.js';
 
 export default async function handler(req, res) {
   console.log("REQ BODY:", req.body);
@@ -36,28 +36,18 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'userId requis' });
     }
 
-    // Vérifier le nombre d'utilisateurs DIRECTEMENT (sans appel HTTP)
-    const count = await getUsersCount();
-
-    if (count >= 95) {
-      return res.status(403).json({
-        error: 'Limite atteinte',
-        message: 'Le service de synchronisation bancaire a atteint sa capacité maximale.'
-      });
-    }
-
-    // Obtenir un access token pour cet utilisateur
+    // Obtenir un access token pour cet utilisateur (crée l'utilisateur si nécessaire)
     const accessToken = await getAccessToken(userId);
 
     // Générer un lien de connexion Bridge avec la nouvelle API v3
     const response = await axios.post(
       'https://api.bridgeapi.io/v3/aggregation/connect-sessions',
-      {
-        user_email: `${userId}@placeholder.com`
-      },
+      {},
       {
         headers: {
           'Bridge-Version': process.env.BRIDGE_VERSION,
+          'Client-Id': process.env.BRIDGE_CLIENT_ID,
+          'Client-Secret': process.env.BRIDGE_CLIENT_SECRET,
           'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json'
         }
