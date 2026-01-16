@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { getUsersCount, sendAlertIfNeeded } from './utils.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -6,60 +6,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Vérifier que toutes les variables d'environnement sont présentes
+    // Vérifier que les variables d'environnement sont présentes
     if (!process.env.BRIDGE_CLIENT_ID || !process.env.BRIDGE_CLIENT_SECRET || !process.env.BRIDGE_VERSION) {
-      console.error('Variables d\'environnement manquantes:', {
-        hasClientId: !!process.env.BRIDGE_CLIENT_ID,
-        hasClientSecret: !!process.env.BRIDGE_CLIENT_SECRET,
-        hasVersion: !!process.env.BRIDGE_VERSION
-      });
+      console.error('Variables d\'environnement manquantes');
       return res.status(500).json({ error: 'Configuration serveur manquante' });
     }
 
-    // Récupérer tous les items actifs
-    const response = await axios.get(
-      'https://api.bridgeapi.io/v2/items',
-      {
-        headers: {
-          'Bridge-Version': process.env.BRIDGE_VERSION,
-          'Client-Id': process.env.BRIDGE_CLIENT_ID,
-          'Client-Secret': process.env.BRIDGE_CLIENT_SECRET
-        }
-      }
-    );
+    // Récupérer le nombre d'utilisateurs actifs
+    const count = await getUsersCount();
 
-    const activeUsers = response.data.resources.filter(item => item.status === 'ok');
-    const count = activeUsers.length;
+    // Envoyer une alerte si nécessaire
+    await sendAlertIfNeeded(count);
 
-    // Vérifier les seuils d'alerte
     const maxUsers = parseInt(process.env.MAX_USERS) || 100;
-    const thresholds = process.env.ALERT_THRESHOLDS 
-      ? process.env.ALERT_THRESHOLDS.split(',').map(Number)
-      : [25, 50, 75, 90, 95];
-
-    // Envoyer une alerte si un seuil est atteint
-    for (const threshold of thresholds) {
-      if (count === threshold) {
-        try {
-          // Construire l'URL de base correctement
-          const baseUrl = process.env.VERCEL_URL 
-            ? `https://${process.env.VERCEL_URL}` 
-            : 'http://localhost:3000';
-
-          // Envoyer une alerte (ne pas bloquer si ça échoue)
-          await fetch(`${baseUrl}/api/email/alert`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ count, threshold, maxUsers })
-          }).catch(err => {
-            console.error('Erreur envoi alerte email:', err.message);
-          });
-        } catch (alertError) {
-          // Ne pas faire échouer toute la requête si l'alerte échoue
-          console.error('Erreur lors de l\'envoi d\'alerte:', alertError.message);
-        }
-      }
-    }
 
     return res.status(200).json({ 
       count,

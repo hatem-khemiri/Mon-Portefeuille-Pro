@@ -1,0 +1,55 @@
+import axios from 'axios';
+
+/**
+ * Récupère le nombre d'utilisateurs actifs depuis Bridge API
+ */
+export async function getUsersCount() {
+  try {
+    const response = await axios.get(
+      'https://api.bridgeapi.io/v2/items',
+      {
+        headers: {
+          'Bridge-Version': process.env.BRIDGE_VERSION,
+          'Client-Id': process.env.BRIDGE_CLIENT_ID,
+          'Client-Secret': process.env.BRIDGE_CLIENT_SECRET
+        }
+      }
+    );
+
+    const activeUsers = response.data.resources.filter(item => item.status === 'ok');
+    return activeUsers.length;
+  } catch (error) {
+    console.error('Erreur getUsersCount:', error.response?.data || error.message);
+    throw error;
+  }
+}
+
+/**
+ * Envoie une alerte email si un seuil est atteint
+ */
+export async function sendAlertIfNeeded(count) {
+  const maxUsers = parseInt(process.env.MAX_USERS) || 100;
+  const thresholds = process.env.ALERT_THRESHOLDS 
+    ? process.env.ALERT_THRESHOLDS.split(',').map(Number)
+    : [25, 50, 75, 90, 95];
+
+  for (const threshold of thresholds) {
+    if (count === threshold) {
+      try {
+        const baseUrl = process.env.VERCEL_URL 
+          ? `https://${process.env.VERCEL_URL}` 
+          : 'http://localhost:3000';
+
+        await fetch(`${baseUrl}/api/email/alert`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ count, threshold, maxUsers })
+        }).catch(err => {
+          console.error('Erreur envoi alerte:', err.message);
+        });
+      } catch (alertError) {
+        console.error('Erreur lors de l\'alerte:', alertError.message);
+      }
+    }
+  }
+}

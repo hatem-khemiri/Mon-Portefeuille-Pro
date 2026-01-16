@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getUsersCount } from './utils.js';
 
 export default async function handler(req, res) {
   console.log("REQ BODY:", req.body);
@@ -9,13 +10,12 @@ export default async function handler(req, res) {
     vercelUrl: process.env.VERCEL_URL
   });
 
-  // Autoriser uniquement POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    // 🔍 Vérifier que les variables d'environnement sont présentes
+    // Vérifier que les variables d'environnement sont présentes
     if (
       !process.env.BRIDGE_CLIENT_ID ||
       !process.env.BRIDGE_CLIENT_SECRET ||
@@ -36,14 +36,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'userId requis' });
     }
 
-    // 🌍 URL BASE CORRECTE (local ou Vercel)
-    const baseUrl = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3000';
-
-    // 👥 Vérifier le nombre d'utilisateurs
-    const countResponse = await axios.get(`${baseUrl}/api/bridge/users-count`);
-    const { count } = countResponse.data;
+    // Vérifier le nombre d'utilisateurs DIRECTEMENT (sans appel HTTP)
+    const count = await getUsersCount();
 
     if (count >= 95) {
       return res.status(403).json({
@@ -52,7 +46,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // 🔐 Générer un lien de connexion Bridge
+    // Générer un lien de connexion Bridge
     const response = await axios.post(
       'https://api.bridgeapi.io/v2/connect/items/add',
       {
@@ -69,7 +63,6 @@ export default async function handler(req, res) {
       }
     );
 
-    // ✅ Retourner le lien
     return res.status(200).json({
       connectUrl: response.data.redirect_url,
       userId
