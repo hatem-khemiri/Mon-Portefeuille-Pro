@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getUsersCount } from './utils.js';
+import { getUsersCount, getAccessToken } from './utils.js';
 
 export default async function handler(req, res) {
   console.log("REQ BODY:", req.body);
@@ -46,25 +46,26 @@ export default async function handler(req, res) {
       });
     }
 
-    // Générer un lien de connexion Bridge
+    // Obtenir un access token pour cet utilisateur
+    const accessToken = await getAccessToken(userId);
+
+    // Générer un lien de connexion Bridge avec la nouvelle API v3
     const response = await axios.post(
-      'https://api.bridgeapi.io/v2/connect/items/add',
+      'https://api.bridgeapi.io/v3/aggregation/connect-sessions',
       {
-        user: { external_id: userId },
-        prefill_email: null
+        user_email: `${userId}@placeholder.com`
       },
       {
         headers: {
           'Bridge-Version': process.env.BRIDGE_VERSION,
-          'Client-Id': process.env.BRIDGE_CLIENT_ID,
-          'Client-Secret': process.env.BRIDGE_CLIENT_SECRET,
+          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json'
         }
       }
     );
 
     return res.status(200).json({
-      connectUrl: response.data.redirect_url,
+      connectUrl: response.data.url,
       userId
     });
 
