@@ -19,6 +19,12 @@ export async function getUsersCount() {
     const activeUsers = response.data.resources.filter(item => item.status === 'ok');
     return activeUsers.length;
   } catch (error) {
+    // Si 404, c'est qu'il n'y a pas encore d'utilisateurs
+    if (error.response?.status === 404) {
+      console.log('Aucun utilisateur Bridge trouvé (normal au début)');
+      return 0;
+    }
+    
     console.error('Erreur getUsersCount:', error.response?.data || error.message);
     throw error;
   }
