@@ -27,8 +27,13 @@ export default async function handler(req, res) {
 
     for (const threshold of thresholds) {
       if (count === threshold) {
+        // Construire l'URL de base correctement
+        const baseUrl = process.env.VERCEL_URL 
+          ? `https://${process.env.VERCEL_URL}` 
+          : 'http://localhost:3000';
+
         // Envoyer une alerte
-        await fetch(`${process.env.VERCEL_URL || 'http://localhost:3000'}/api/email/alert`, {
+        await fetch(`${baseUrl}/api/email/alert`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ count, threshold, maxUsers })
