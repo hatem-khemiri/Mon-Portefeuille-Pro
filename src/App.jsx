@@ -39,6 +39,7 @@ function AppContent() {
     setChargesFixes,
     epargnes,
     setEpargnes,
+    dettes, // ✅ AJOUT : Déstructurer dettes depuis useFinance
     setDateCreationCompte,
     categoriesDepenses,
     categoriesRevenus,
@@ -192,7 +193,7 @@ function AppContent() {
         transactions,
         chargesFixes,
         epargnes,
-        dettes,
+        dettes, // ✅ Maintenant dettes est défini !
         categoriesDepenses,
         categoriesRevenus,
         categoriesEpargnes
