@@ -181,11 +181,11 @@ function AppContent() {
 
   const handleExport = async () => {
     setNotification({ type: 'info', message: '📄 Génération du rapport en cours...' });
-  
+
     try {
       // Importer la fonction de génération du rapport
       const { generateReport } = await import('./utils/reportGenerator');
-    
+  
       // Générer le rapport HTML
       const reportHTML = generateReport({
         currentUser,
@@ -193,42 +193,35 @@ function AppContent() {
         transactions,
         chargesFixes,
         epargnes,
-        dettes, // ✅ Maintenant dettes est défini !
+        dettes,
         categoriesDepenses,
         categoriesRevenus,
         categoriesEpargnes
       });
-    
+  
       // Créer un Blob avec le HTML
       const blob = new Blob([reportHTML], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
     
-      // Vérifier si l'API Web Share est disponible (pour Android/PWA)
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'rapport.html', { type: 'text/html' })] })) {
-        // Utiliser l'API Web Share native (Android)
-        const file = new File([blob], `Rapport_${currentUser}_${new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')}.html`, { 
-          type: 'text/html' 
+      // Ouvrir directement dans un nouvel onglet
+      const newWindow = window.open(url, '_blank');
+    
+      if (newWindow) {
+        // Succès : la fenêtre s'est ouverte
+        setNotification({ 
+          type: 'success', 
+          message: '✅ Rapport ouvert dans un nouvel onglet ! Vous pouvez l\'imprimer ou le sauvegarder.' 
         });
       
-        await navigator.share({
-          title: 'Rapport Financier',
-          text: `Rapport financier de ${currentUser}`,
-          files: [file]
-        });
-      
-        setNotification({ type: 'success', message: '✅ Rapport partagé avec succès !' });
+        // Libérer la mémoire après un délai
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
       } else {
-        // Télécharger automatiquement le fichier HTML
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Rapport_${currentUser}_${new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')}.html`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-  
-        setTimeout(() => URL.revokeObjectURL(url), 10000);
-  
-        setNotification({ type: 'success', message: '✅ Rapport téléchargé !' });
+        // Échec : popup bloquée
+        setNotification({ 
+          type: 'warning', 
+          message: '⚠️ Pop-up bloquée ! Autorisez les pop-ups pour ce site et réessayez.' 
+        });
+        URL.revokeObjectURL(url);
       }
     } catch (error) {
       console.error('Erreur export:', error);
