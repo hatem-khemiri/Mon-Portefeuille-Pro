@@ -217,14 +217,18 @@ function AppContent() {
       
         setNotification({ type: 'success', message: '✅ Rapport partagé avec succès !' });
       } else {
-        // Fallback : Ouvrir dans un nouvel onglet
+        // Télécharger automatiquement le fichier HTML
         const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
-      
-        // Libérer la mémoire après un délai
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Rapport_${currentUser}_${new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')}.html`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+  
         setTimeout(() => URL.revokeObjectURL(url), 10000);
-      
-        setNotification({ type: 'success', message: '✅ Rapport ouvert dans un nouvel onglet !' });
+  
+        setNotification({ type: 'success', message: '✅ Rapport téléchargé !' });
       }
     } catch (error) {
       console.error('Erreur export:', error);
