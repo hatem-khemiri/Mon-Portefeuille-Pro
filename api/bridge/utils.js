@@ -1,12 +1,17 @@
 import axios from 'axios';
 
+// URL de base selon l'environnement
+const BRIDGE_API_URL = process.env.BRIDGE_ENV === 'production' 
+  ? 'https://api.bridgeapi.io'
+  : 'https://sync.bankin.com';
+
 /**
  * Génère un access token pour un utilisateur (crée l'utilisateur si nécessaire)
  */
 export async function getAccessToken(userId) {
   try {
     const response = await axios.post(
-      'https://api.bridgeapi.io/v3/aggregation/authorization/token',
+      `${BRIDGE_API_URL}/v3/aggregation/authorization/token`,
       {
         external_user_id: userId
       },
@@ -27,7 +32,7 @@ export async function getAccessToken(userId) {
       console.log('Utilisateur inexistant, création...');
       
       await axios.post(
-        'https://api.bridgeapi.io/v3/aggregation/users',
+        `${BRIDGE_API_URL}/v3/aggregation/users`,
         {
           external_user_id: userId
         },
