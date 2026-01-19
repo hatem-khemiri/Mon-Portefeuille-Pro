@@ -1,5 +1,5 @@
 const API_URL = import.meta.env.PROD 
-  ? 'https://mon-portefeuille-backend.onrender.com/api' // À remplacer par votre URL Render plus tard
+  ? 'https://mon-portefeuille-backend.onrender.com'
   : 'http://localhost:3001/api';
 
 export const bridgeService = {
